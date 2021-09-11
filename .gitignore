@@ -1,0 +1,14 @@
+*.jpg
+*.png
+*.txt
+
+driver/*
+!driver/.gitkeep
+banner/*
+!banner/.gitkeep
+input/*
+!input/.gitkeep
+stage/*
+!stage/.gitkeep
+
+!requirements.txt
