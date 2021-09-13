@@ -21,7 +21,8 @@ def check_banner(args):
 
     # Read banners to check
     banners = [ cv2.imread(osp.join(banner_dir, banner))
-                for banner in os.listdir(banner_dir) ]
+                for banner in os.listdir(banner_dir)
+                if not banner.startswith('.') ]
     count = len(banners)
 
     # Check downloaded images one by one
@@ -60,7 +61,7 @@ def main(args):
     mobile_emulation = { "deviceName": "iPhone X" }
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--headless")
-    chrome_options.add_experimental_option("mobileEmulation", mobile_emulation)
+    # chrome_options.add_experimental_option("mobileEmulation", mobile_emulation)
     driver = webdriver.Chrome(args['driver'], options=chrome_options)
     driver.get('http://google.com')
 
@@ -70,6 +71,7 @@ def main(args):
         driver.execute_script(f"window.open('about:blank', '{name}');")
         driver.switch_to.window(name)
         driver.get(seller)
+        time.sleep(3)
 
     # Parse every opened pages
     pattern = r"https://cf.shopee.tw/file/[\d\w]+"
@@ -102,7 +104,11 @@ def main(args):
     driver.quit()
 
     # Check banners with multiple workers
-    stages = [ osp.join(args['stage'], seller) for seller in os.listdir(args['stage']) ]
+    stages = [
+        osp.join(args['stage'], seller)
+        for seller in os.listdir(args['stage'])
+        if not seller.startswith('.')
+        ]
     banners = [ args['banner'] ]*len(stages)
     tasks = list(zip(stages, banners))
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
